@@ -1,0 +1,91 @@
+* {
+  background-color: antiquewhite;
+  margin: 3px 5px;
+  /* padding: 0; */
+  font-family: 'Times New Roman', Times, serif;
+  /* font-family:Arial, Helvetica, sans-serif; */
+  /* font-family: Georgia, 'Times New Roman', Times, serif; */
+}
+.header {
+  width: 100%;
+  height: 25%;
+  margin: 0px -20px;
+  position: fixed;
+  box-shadow: 0px 5px 10px 0px rgba(0,0,0,0.1);
+  z-index: 2;
+}
+.container {
+  margin: 240px 5px;
+  position: absolute;
+}
+.create_todo {
+  margin: 35px 0px 0px 32px;
+  padding: 0px 0px 0px 0px;
+  /* position: fixed; */
+}
+.header_of_tasks {
+  font-size: 18px;
+  display: flex;
+  margin: 35px 0px 0px 32px;
+  padding: 0px 0px 0px 0px;
+  font-weight: 800;
+}
+.todos {
+  font-size: 17px;
+  margin: 17px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+}
+.todo {
+  display: flex;
+}
+.uuid {
+  width: 0px;
+  height: 0px;
+  margin: -0px 0px 0px 0px;
+  padding: 0px 0px 0px 0px;
+  font-size: 0;
+}
+.title {
+  width: 200px;
+}
+.description {
+  width: 300px;
+}
+.finishDate {
+  width: 180px;
+}
+.done {
+  width: 150px;
+}
+.fileName {
+  width: 160px;
+}
+.uploadUrl {
+  width: 360px;
+  display: flex;
+}
+.inputfileUrl {
+  width: 280px;
+  font-size: 15px;
+  text-align: center;
+  vertical-align: middle;
+}
+h1 {
+  margin: 35px 0px 0px 32px;
+  font-family: Georgia, 'Times New Roman', Times, serif;
+  font-weight: 900;
+}
+button
+{
+  display: inline-block;
+  color: rgba(0, 0, 0, 0.886);
+  border: 2px solid rgba(0, 0, 0, 0.779);
+  cursor: pointer;
+  border-radius: 5px;
+  height: 30px;
+  width: 70px;
+  align-items: center;
+}
+.cancel_update {
+  width: 100px;
+}
