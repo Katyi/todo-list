@@ -8,7 +8,6 @@ import { useState, useEffect } from "react";
 import dayjs from 'dayjs';
 
 function App() {
-  //----------------------Hooks---------------------------------------------------------------------
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [finishDate, setFinishDate] = useState("");
@@ -29,7 +28,11 @@ function App() {
     setFinishDate(e.target.value)
   }
 
-  //-----------------------------read db-----------------------------------------------------------
+/**
+ * @description Используется hook useEffect для отображения всех задач листа TODO на странице сайта
+ * @description Используется dayjs для работы с датами
+ * @description Если дата задачи листа TODO прошла, то ставит в столбце "Завершена?" значение "Просрочена", игнорирует если "Выполнена!"
+ */
   useEffect(() => {
     const now = dayjs(new Date());
     onValue(ref_database(db), (snapshot) => {
@@ -37,8 +40,8 @@ function App() {
       const data = snapshot.val();
       if (data !== null) {
         Object.values(data).map((todo) => {
-          if (now.diff(dayjs(todo.finishDate)) > 0 && todo.done !== 'Выполнен!') {
-            todo.done = "Просрочен";
+          if (now.diff(dayjs(todo.finishDate)) > 0 && todo.done !== 'Выполнена!') {
+            todo.done = "Просрочена";
           }
           setTodos((oldArray) => [...oldArray, {
             uuid: todo.uuid,
@@ -54,7 +57,11 @@ function App() {
     });
   }, []);
 
-  //-----------------------write db------------------------------------------
+/**
+ * @description После заполнения Input-ов для title, setDescription setFinishDate вводит новую задачу листа TODO в Firebase database
+ * @description Результат появляется на экране через hook useEffect (новая строка в списке задач листа TODO)
+ * @description В столбец "Завершена?" присваивает значение "Нет"
+*/
   const writeToDatebase = () => {
     const uuid = uid();
     set(ref_database(db, `/${uuid}`), {
@@ -71,7 +78,11 @@ function App() {
     setFinishDate("");
   };
 
-  // -----------------Upload file------------------------------------------
+/**
+ * @description После выбора файла для загрузки в столбце "Загрузка файла" и нажатия кнопки "Upload" определяет файл для загрузки (file) и определяет ID задачи листа TODO (divUuid)
+ * @description Передает переменные file и divUuid в функцию uploadFiles
+ * @param {Event} e - файл для загрузки
+*/
   const handleUpload = (e) => {
     e.preventDefault();
     const file = e.target[0].files[0];
@@ -84,6 +95,13 @@ function App() {
     uploadFiles(file, divUuid);
   }
 
+/**
+ * @description Загружает файл для загрузки file в Firebase Storage, определяет имя fileName
+ * @description Выгружает ссылку downloadURL загруженного файла file из Firebase Storage
+ * @description Передает переменные downloadURL, divUuid, fileName в функцию recordUrl
+ * @param {file} file - файл для загрузки
+ * @param {string} divUuid - ID задачи листа TODO
+*/
   const uploadFiles = async (file, divUuid) => {
     if (!file) return;
     const sotrageRef = ref_storage(storage, `files/${file.name}`);
@@ -108,6 +126,13 @@ function App() {
     );
   };
 
+/**
+ * @description Присваивает ссылку загруженного файла url задаче листа TODO c полученным ID в Firebase database
+ * @description Присваивает название загруженного файла fileName задаче листа TODO c полученным ID в Firebase database
+ * @param {string} url - ссылка на файл для загрузки
+ * @param {string} divUuid - ID задачи листа TODO
+ * @param {string} fileName - имя файлв загрузки
+*/
   const recordUrl = (url, divUuid, fileName) => {
     update(ref_database(db, `/${divUuid}`, divUuid), {
       uuid: divUuid,
@@ -116,14 +141,22 @@ function App() {
     });
   }
 
-  //-------------------completed todo's task-----------------------------------------------------
+/**
+ * @description При нажатии кнопки "Done!" присваивает значение "Выполнена!" задаче листа TODO в Firebase database
+ * @description Результат отображается на странице сайта в столбце "Завершена?"
+ * @param {object} todo - имя файлв загрузки
+*/
   const handleComplete = (todo) => {
     update(ref_database(db, `/${todo.uuid}`, todo.uuid), {
-      done: 'Выполнен!'
+      done: 'Выполнена!'
     });
   }
 
-  //--------------------update db----------------------------------------------------------------
+/**
+ * @description меняет значение состояния isEdit на true через setIsEdit, после этого запустится функция handleSubmitChange
+ * @description Присивает значения состояниям TempUuid, Title, Description, FinishDate через setTempUuid, setTitle, setDescription, setFinishDate
+ * @param {object} todo - имя файлв загрузки
+*/
   const handleUpdate = (todo) => {
     setIsEdit(true);
     setTempUuid(todo.uuid);
@@ -132,6 +165,11 @@ function App() {
     setFinishDate(finishDate.finishDate);
   }
 
+/**
+ * @description Кнопка "Submit" поменяется на "Update"
+ * @description После заполнения Input-ов для полей title, setDescription setFinishDate при нажатии кнопки "Update" получает новые значения для задачи листа TODO
+ * @description обновляет значения title, setDescription setFinishDate в Firebase database
+*/
   const handleSubmitChange = () => {
     update(ref_database(db, `/${tempUuid}`), {
       title,
@@ -139,19 +177,20 @@ function App() {
       finishDate,
       uuid: tempUuid,
     });
-
     setTitle("");
     setDescription("");
     setFinishDate("");
     setIsEdit(false);
   }
 
-  //---------------------------------delete db---------------------------------------------------------------------------
+/**
+ * @description удаляет задачу листа TODO в в Firebase database
+ * @param {object} todo - имя файлв загрузки
+*/
   const handleDelete = (todo) => {
     remove(ref_database(db, `/${todo.uuid}`));
   }
 
-  //                     HTML-------------------------------------------------------------------------------------------
   return (
     <div className='App'>
       <div className='header'>
@@ -175,12 +214,12 @@ function App() {
           )}
         </div>
         <div className='header_of_tasks'>
-          <div className='title'>Заголовок</div>
+          <div className='title'>Задача</div>
           <div className='description'>Описание</div>
           <div className='finishDate'>Дата завершения</div>
-          <div className='done'>Завершен?</div>
-          <div className='fileName'>Название файл</div>
-          <div className='uploadUrl'>Загрузка ссылки файла</div>
+          <div className='done'>Завершена?</div>
+          <div className='fileName'>Название файла</div>
+          <div className='uploadUrl'>Загрузка файла</div>
         </div>
       </div>
       <div className='container'>
